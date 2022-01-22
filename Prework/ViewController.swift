@@ -28,12 +28,26 @@ class ViewController: UIViewController {
         // get total tip by multiplying tip * tipPercentage
         let tipPercentages = [0.15, 0.18, 0.2]
         let tip = bill * tipPercentages[tipControl.selectedSegmentIndex]
-        let total = bill + tip
+        let total:Decimal = Decimal(bill + tip)
+        
+        var totalFormatter: String {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .currency
+            formatter.usesGroupingSeparator = true
+            
+            let doubleValue = total.doubleValue
+            if let result = formatter.string(from: doubleValue as NSNumber){
+                return result
+            }
+            
+            return ""
+        }
+        
         
         // update the tip amount
         tipAmountLabel.text = String(format: "$%.2f", tip)
         // update total amount
-        totalLabel.text = String(format: "$%.2f", total)
+        totalLabel.text = totalFormatter
     }
     
     // add slider functionality, when the user selects a tip amount it changes the color of that segment
@@ -49,6 +63,10 @@ class ViewController: UIViewController {
             break
         }
     }
-    
 }
 
+extension Decimal {
+    var doubleValue: Double{
+        return NSDecimalNumber(decimal: self).doubleValue
+    }
+}
